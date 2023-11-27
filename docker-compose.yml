@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  telefonia:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: telefonia-api
+    container_name: telefonia-api
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - telefonia-network
+       
+  db:
+    image: mysql
+    container_name: telefonia-db
+    restart: always
+    networks:
+      - telefonia-network
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: telefonia
+    ports:
+    - "3306:3306"
+    volumes:
+      - ./docker/volume_mysql:/var/lib/mysql
+    cap_add:
+      - SYS_NICE
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+networks:
+  telefonia-network:
+    driver: bridge

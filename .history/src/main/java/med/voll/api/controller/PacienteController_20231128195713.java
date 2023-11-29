@@ -41,6 +41,7 @@ public class PacienteController {
         return repository.findAllByAtivoTrue(paginacao).map(DadosListagemPaciente::new);
     }
 
+
     @PutMapping
     @Transactional
     ResponseEntity<String> atualizar(@Valid @RequestBody DadosAtualizaPaciente dados) {

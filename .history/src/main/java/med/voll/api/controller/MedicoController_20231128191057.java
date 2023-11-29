@@ -55,7 +55,7 @@ public class MedicoController {
     @Transactional
     ResponseEntity<String> deletar(@PathVariable Long id) {
         Medico medico = repository.getReferenceById(id);
-        medico.inativar();
-        return ResponseEntity.ok("Médico desativado com sucesso");
+        medico.excluir();
+        return ResponseEntity.ok("Médico deletado com sucesso");
     }
 }

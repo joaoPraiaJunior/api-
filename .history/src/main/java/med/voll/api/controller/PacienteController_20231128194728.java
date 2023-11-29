@@ -41,6 +41,7 @@ public class PacienteController {
         return repository.findAllByAtivoTrue(paginacao).map(DadosListagemPaciente::new);
     }
 
+
     @PutMapping
     @Transactional
     ResponseEntity<String> atualizar(@Valid @RequestBody DadosAtualizaPaciente dados) {
@@ -54,6 +55,6 @@ public class PacienteController {
     ResponseEntity<String> deletar(@PathVariable Long id) {
         Paciente paciente = repository.getReferenceById(id);
         paciente.inativar();
-        return ResponseEntity.ok("Paciente desativado com sucesso");
+        return ResponseEntity.ok("Médico desativado com sucesso");
     }
 }

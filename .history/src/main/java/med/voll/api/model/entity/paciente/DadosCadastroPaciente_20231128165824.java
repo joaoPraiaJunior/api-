@@ -21,7 +21,6 @@ public record DadosCadastroPaciente(
         @NotBlank(message = "O CPF é obrigatório")
         @Pattern(regexp = "\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}", message = "O CPF deve ser válido")
         String cpf,
-        
         @NotNull @Valid DadosEndereco endereco
 ) {
 }

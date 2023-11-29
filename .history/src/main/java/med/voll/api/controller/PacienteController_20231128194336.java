@@ -38,7 +38,7 @@ public class PacienteController {
 
     @GetMapping
     public Page<DadosListagemPaciente> listar(@PageableDefault(page = 0, size = 10, sort = { "nome" }) Pageable paginacao) {
-        return repository.findAllByAtivoTrue(paginacao).map(DadosListagemPaciente::new);
+        return repository.findAll(paginacao).map(DadosListagemPaciente::new);
     }
 
     @PutMapping
@@ -54,6 +54,6 @@ public class PacienteController {
     ResponseEntity<String> deletar(@PathVariable Long id) {
         Paciente paciente = repository.getReferenceById(id);
         paciente.inativar();
-        return ResponseEntity.ok("Paciente desativado com sucesso");
+        return ResponseEntity.ok("Médico desativado com sucesso");
     }
 }

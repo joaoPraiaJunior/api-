@@ -1,6 +1,5 @@
 package med.voll.api.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,45 +16,44 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.voll.api.model.entity.medico.DadosAtualizaMedico;
-import med.voll.api.model.entity.medico.DadosCadastroMedico;
-import med.voll.api.model.entity.medico.DadosListagemMedico;
-import med.voll.api.model.entity.medico.Medico;
-import med.voll.api.model.repositories.MedicoRepository;
+import med.voll.api.model.entity.paciente.DadosAtualizaPaciente;
+import med.voll.api.model.entity.paciente.DadosCadastroPaciente;
+import med.voll.api.model.entity.paciente.DadosListagemPaciente;
+import med.voll.api.model.entity.paciente.Paciente;
+import med.voll.api.model.repositories.PacienteRepository;
 
 @RestController
-@RequestMapping("/medicos")
-public class MedicoController {
-
+@RequestMapping("/pacientes")
+public class PacienteController {
 
     @Autowired
-    private MedicoRepository repository;
+    private PacienteRepository repository;
 
     @PostMapping
     @Transactional
-    ResponseEntity<String> cadastrar(@Valid @RequestBody DadosCadastroMedico dados) {
-        repository.save(new Medico(dados));
-        return ResponseEntity.ok("Médico cadastrado com sucesso");
+    ResponseEntity<String> cadastrar(@Valid @RequestBody DadosCadastroPaciente dados) {
+        repository.save(new Paciente(dados));
+        return ResponseEntity.ok("Paciente cadastrado com sucesso");
     }
 
     @GetMapping
-    public Page<DadosListagemMedico> listar(@PageableDefault(size = 10, sort ={"nome"}) Pageable paginacao) {
-        return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+    public Page<DadosListagemPaciente> listar(@PageableDefault(page = 0, size = 10, sort = { "nome" }) Pageable paginacao) {
+        return repository.findAll(paginacao).map(DadosListagemPaciente::new);
     }
 
     @PutMapping
     @Transactional
-    ResponseEntity<String> atualizar(@Valid @RequestBody DadosAtualizaMedico dados) {
-        Medico medico = repository.getReferenceById(dados.id());
-        medico.atualizar(dados);
-        return ResponseEntity.ok("Médico atualizado com sucesso");
+    ResponseEntity<String> atualizar(@Valid @RequestBody DadosAtualizaPaciente dados) {
+        Paciente paciente = repository.getReferenceById(dados.id());
+        paciente.atualizarInformacoes(dados);
+        return ResponseEntity.ok("Paciente atualizado com sucesso");
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     ResponseEntity<String> deletar(@PathVariable Long id) {
-        Medico medico = repository.getReferenceById(id);
-        medico.inativar();
+        Paciente paciente = repository.getReferenceById(id);
+        paciente.excluir();
         return ResponseEntity.ok("Médico desativado com sucesso");
     }
 }

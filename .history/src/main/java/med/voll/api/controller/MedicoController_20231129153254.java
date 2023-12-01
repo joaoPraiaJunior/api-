@@ -62,9 +62,12 @@ public class MedicoController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity deletar(@PathVariable Long id) {
-        Medico medico = repository.getReferenceById(id);
-        medico.inativar();
-        return ResponseEntity.noContent().build();
-
+        try {
+            Medico medico = repository.getReferenceById(id);
+            medico.inativar();
+            return ResponseEntity.ok("Médico inativado com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não foi possível inativar o médico");
+        }
     }
 }

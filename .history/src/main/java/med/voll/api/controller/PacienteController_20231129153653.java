@@ -49,8 +49,12 @@ public class PacienteController {
 
     @GetMapping("/{id}")
     public ResponseEntity detalhar(@PathVariable Long id) {
-        Paciente paciente = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoPaciente(paciente));
+        try {
+            Paciente paciente = repository.getReferenceById(id);
+            return ResponseEntity.ok(new DadosDetalhamentoPaciente(paciente));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não foi possível encontrar o paciente");
+        }
     }
 
     @PutMapping

@@ -42,30 +42,42 @@ public class PacienteController {
 
     @GetMapping
     public ResponseEntity<Page<DadosListagemPaciente>> listar(
-            @PageableDefault(page = 0, size = 10, sort = { "nome" }) Pageable paginacao) {
+        @PageableDefault(page = 0, size = 10, sort = { "nome" }) Pageable paginacao) {
         var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemPaciente::new);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity detalhar(@PathVariable Long id) {
-        Paciente paciente = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoPaciente(paciente));
+        try {
+            Paciente paciente = repository.getReferenceById(id);
+            return ResponseEntity.ok(new DadosDetalhamentoPaciente(paciente));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não foi possível encontrar o paciente");
+        }
     }
 
     @PutMapping
     @Transactional
     public ResponseEntity atualizar(@Valid @RequestBody DadosAtualizaPaciente dados) {
-        Paciente paciente = repository.getReferenceById(dados.id());
-        paciente.atualizarInformacoes(dados);
-        return ResponseEntity.ok(new DadosDetalhamentoPaciente(paciente));
+        try {
+            Paciente paciente = repository.getReferenceById(dados.id());
+            paciente.atualizarInformacoes(dados);
+            return ResponseEntity.ok(new DadosDetalhamentoPaciente(paciente));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não foi possível atualizar o paciente");
+        }
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity deletar(@PathVariable Long id) {
-        Paciente paciente = repository.getReferenceById(id);
-        paciente.inativar();
-        return ResponseEntity.noContent().build();
+        try {
+            Paciente paciente = repository.getReferenceById(id);
+            paciente.inativar();
+            return ResponseEntity.ok("Paciente inativado com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não foi possível inativar o paciente");
+        }
     }
 }

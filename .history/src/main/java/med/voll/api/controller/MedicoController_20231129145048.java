@@ -1,5 +1,6 @@
 package med.voll.api.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import med.voll.api.model.repositories.MedicoRepository;
 @RequestMapping("/medicos")
 public class MedicoController {
 
+
     @Autowired
     private MedicoRepository repository;
 
@@ -41,30 +43,31 @@ public class MedicoController {
     }
 
     @GetMapping
-    public Page<DadosListagemMedico> listar(@PageableDefault(size = 10, sort = { "nome" }) Pageable paginacao) {
+    public Page<DadosListagemMedico> listar(@PageableDefault(size = 10, sort ={"nome"}) Pageable paginacao) {
         return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id) {
-        Medico medico = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
 
     @PutMapping
     @Transactional
     public ResponseEntity atualizar(@Valid @RequestBody DadosAtualizaMedico dados) {
-        Medico medico = repository.getReferenceById(dados.id());
-        medico.atualizar(dados);
-        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
+        try {
+            Medico medico = repository.getReferenceById(dados.id());
+            medico.atualizar(dados);
+            return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não foi possível atualizar o médico");
+        }
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity deletar(@PathVariable Long id) {
-        Medico medico = repository.getReferenceById(id);
-        medico.inativar();
-        return ResponseEntity.noContent().build();
-
+        try {
+            Medico medico = repository.getReferenceById(id);
+            medico.inativar();
+            return ResponseEntity.ok("Médico inativado com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não foi possível inativar o médico");
+        }
     }
 }
